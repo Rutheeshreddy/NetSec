@@ -26,10 +26,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["transfer"]))
         exit();
     }    
 
+    $senderUsername = htmlspecialchars(trim($_SESSION["username"]), ENT_QUOTES, 'UTF-8');
+    $min_interval = 20; 
+
+    if (isset($_SESSION["last_transfer_time"]) && (time() - $_SESSION["last_transfer_time"]) < $min_interval) {
+        $_SESSION["errors_transfer"] = "Too many transfers! Try again later.";
+        logUserActivity($senderUsername, "Rate limit exceeded for money transfer");
+        header("Location: sendMoney.inc.php");
+        exit();
+    }
+
+    $_SESSION["last_transfer_time"] = time();
+
     $receiverUsername = htmlspecialchars(trim($_POST["username"]), ENT_QUOTES, 'UTF-8');
     $comment = htmlspecialchars($_POST["comment"] ?? "", ENT_QUOTES, 'UTF-8');
     $amount = (float)$_POST["amount"];
-    $senderUsername = htmlspecialchars(trim($_SESSION["username"]), ENT_QUOTES, 'UTF-8');
 
     // Validate receiver username
     if (!isset($_POST["username"]) || empty($receiverUsername)) {

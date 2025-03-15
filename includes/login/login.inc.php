@@ -5,8 +5,43 @@ require_once '../../logs/logger.inc.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $pwd = $_POST["password"];
-
     $logUsername = "'Guest'";
+
+    // hCaptcha Secret Key
+    $hcaptcha_secret = "ES_16939cff4011414e8b822d50c4810b89";
+
+    if (!isset($_POST['h-captcha-response']) || empty($_POST['h-captcha-response'])) {
+        logUserActivity($logUsername, "Login failed due to missing CAPTCHA.");
+        header("Location: ../../index.php?error=captcha_missing");
+        exit();
+    }
+
+    // Verify hCaptcha
+    $captcha_response = $_POST['h-captcha-response'];
+    $verify_url = "https://api.hcaptcha.com/siteverify";
+    
+    $data = [
+        "secret" => $hcaptcha_secret,
+        "response" => $captcha_response
+    ];
+    
+    $options = [
+        "http" => [
+            "header" => "Content-Type: application/x-www-form-urlencoded\r\n",
+            "method" => "POST",
+            "content" => http_build_query($data)
+        ]
+    ];
+    
+    $context = stream_context_create($options);
+    $verify_response = file_get_contents($verify_url, false, $context);
+    $captcha_success = json_decode($verify_response, true);
+
+    if (!$captcha_success["success"]) {
+        logUserActivity($logUsername, "Login failed due to invalid CAPTCHA.");
+        header("Location: ../../index.php?error=captcha_invalid");
+        exit();
+    }
 
     try {
         require_once '../db.inc.php';
@@ -15,8 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $errors = [];
 
-        if (strlen($username) > 50) { 
-            $errors["username_length"] = "Username should be less than 50 characters";
+        if (strlen($username) > 30) { 
+            $errors["username_length"] = "Username should be less than 30 characters";
         }
 
         if (strlen($pwd) > 100) { 

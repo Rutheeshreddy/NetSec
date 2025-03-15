@@ -31,7 +31,11 @@ require_once "includes/login/login_view.inc.php";
         
         <form action="includes/login/login.inc.php" method="post">
             <input type="text" name="username" placeholder="Username">
-            <input type="password" name="password" placeholder="Password" >
+            <input type="password" name="password" placeholder="Password">
+            
+            <!-- hCaptcha widget -->
+            <div class="h-captcha" data-sitekey="c68ce7ca-0e68-4ee4-97ba-56acfcd0a206"></div>
+            
             <button type="submit">Login</button>
         </form>
 
@@ -43,12 +47,18 @@ require_once "includes/login/login_view.inc.php";
         
         <form action="includes/signup/signup.inc.php" method="post">
                 <?php signup_inputs(); ?>
+    
+            <!-- hCaptcha widget -->
+            <div class="h-captcha" data-sitekey="c68ce7ca-0e68-4ee4-97ba-56acfcd0a206"></div>
             <button type="submit">Signup</button>
         </form>
 
         <?php check_signup_errors(); ?>
     </div>
 </div>
+
+<!-- Add this script to load hCaptcha -->
+<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+
 </body>
 </html>
-

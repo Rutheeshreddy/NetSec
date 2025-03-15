@@ -24,6 +24,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
+    if (!isset($_SESSION['profile_update_attempts'])) {
+        $_SESSION['profile_update_attempts'] = 0;
+        $_SESSION['profile_update_time'] = time();
+    }
+    
+    if (time() - $_SESSION['profile_update_time'] > 60) {
+        $_SESSION['profile_update_attempts'] = 0;
+        $_SESSION['profile_update_time'] = time();
+    }
+    
+    if ($_SESSION['profile_update_attempts'] >= 5) {
+        $_SESSION["profile_update_error"] = "Too many profile updates. Try again later.";
+        logUserActivity($_SESSION["username"], "Rate limited: Too many profile updates");
+        header("Location: profile.inc.php");
+        exit();
+    }
+    
+    $_SESSION['profile_update_attempts']++;
+
     $email = sanitize_input($_POST["email"] ?? "", 320);
     $bio = sanitize_input($_POST["bio"] ?? "", 500);
     if (!empty($email) && update_user_profile($pdo, $user_id, $email, $bio)) {
