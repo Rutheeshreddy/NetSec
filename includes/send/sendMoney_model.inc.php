@@ -117,3 +117,9 @@ function get_user_balance(PDO $pdo,string $userID)
     $balance = $stmt->fetch(PDO::FETCH_COLUMN);
     return $balance;
 }
+
+function get_username_by_id($pdo, $userID) {
+    $stmt = $pdo->prepare("SELECT username FROM profile WHERE id = :userId");
+    $stmt->execute([':userId' => $userID]);
+    return $stmt->fetchColumn();
+}

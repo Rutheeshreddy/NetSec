@@ -70,6 +70,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["transfer"]))
     if (transfer_money($pdo, $senderId, $receiverUsername, $amount,$_POST['search_type'],$comment)) {
         $_SESSION["transfer_success"] = "Transfer successful!";
         $susername = $_SESSION["username"];
+        if ($_POST['search_type'] == "userID") {
+            $receiverUsername = get_username_by_id($pdo, $receiverUsername);
+        }
         logUserActivity($senderUsername, "Transferred $amount from $susername to $receiverUsername");
     } else {
         $_SESSION["errors_transfer"] = "Transfer failed: " . ($_SESSION["errors_transfer"] ?? "Unknown error.");
