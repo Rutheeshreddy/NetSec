@@ -109,4 +109,37 @@ function sanitize_input(string $input, int $max_length): string {
 function is_valid_email(string $email): bool {
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
+
+// Get user ID by username
+function get_user_id_by_username(PDO $pdo, string $Username): ?int
+{
+    $stmt = $pdo->prepare("SELECT ID FROM Profile WHERE Username = :Username");
+    $stmt->execute([':Username' => $Username]);
+
+    return ($id = $stmt->fetchColumn()) ? (int) $id : null;
+}
+
+// Search users by username (case-insensitive search)
+function search_users(PDO $pdo, string $searchTerm, string $type): array
+{
+
+    if (strlen($searchTerm) < 2) {
+        return []; // Return empty array instead of top 5 users
+    }
+
+    if($type=="username"){
+    $stmt = $pdo->prepare("SELECT Username FROM Profile WHERE LOWER(Username) LIKE LOWER(:searchTerm) LIMIT 5");
+    $searchTerm = $searchTerm . '%'; // Append '%' before binding to parameter
+    $stmt->execute([':searchTerm' => $searchTerm]);
+    }
+    else 
+    {
+        $stmt = $pdo->prepare("SELECT ID FROM Profile WHERE CAST(ID AS TEXT) LIKE :searchTerm LIMIT 5;");
+        $searchTerm = $searchTerm . '%'; // Append '%' for partial matching
+        $stmt->execute([':searchTerm' => $searchTerm]);
+    }
+
+    $result = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    return $result;
+}
 ?>
