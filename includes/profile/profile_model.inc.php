@@ -123,7 +123,7 @@ function get_user_id_by_username(PDO $pdo, string $Username): ?int
 function search_users(PDO $pdo, string $searchTerm, string $type): array
 {
 
-    if (strlen($searchTerm) < 2) {
+    if (strlen($searchTerm) < 1) {
         return []; // Return empty array instead of top 5 users
     }
 

@@ -38,7 +38,7 @@ function display_profile_search_form(): void
             suggestionsBox.style.display = "none";
 
             async function fetchUsers(query, searchType) {
-                if (query.length < 2) {
+                if (query.length < 1) {
                     suggestionsBox.style.display = "none";
                     return;
                 }
