@@ -5,7 +5,9 @@ if (isset($_SESSION["user_id"])) {
     header("Location: includes/profile/profile.inc.php"); 
     exit();
 }
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once 'logs/logger.inc.php';
 $username = $_SESSION['username'] ?? "'Guest'";

@@ -6,7 +6,9 @@ require_once 'profile_model.inc.php';
 require_once '../../logs/logger.inc.php';
 
 header("Content-Type: application/json");
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 $username = $_SESSION["username"] ?? "Guest";
 
