@@ -1,4 +1,3 @@
-/* 🌍 Global Styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -7,32 +6,29 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Ensures full height */
+    height: 100vh; 
 }
 
-/* 🏗️ Parent container holding both forms */
 .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 80%; /* Adjust based on content */
-    max-width: 700px; /* Prevents forms from becoming too wide */
+    width: 80%; 
+    max-width: 700px;
     gap: 20px;
     padding: 20px;
 }
 
-/* 📌 Fixing Form Containers */
 .login-container, .signup-container {
     background: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Ensures both forms take equal space */
-    max-width: 350px; /* Prevents overly wide forms */
+    width: 100%;
+    max-width: 350px; 
     text-align: center;
 }
 
-/* 📌 Ensure proper flexbox layout */
 .login-container {
     flex: 1;
 }
@@ -41,14 +37,12 @@ body {
     flex: 1;
 }
 
-/* 📌 Form Elements */
 form {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* 📌 Input Fields */
 input {
     width: 90%;
     padding: 10px;
@@ -58,7 +52,6 @@ input {
     font-size: 14px;
 }
 
-/* 📌 Buttons */
 button {
     background-color: #28a745;
     color: white;
@@ -76,7 +69,6 @@ button:hover {
     background-color: #218838;
 }
 
-/* 📌 Responsive Design */
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
@@ -87,11 +79,10 @@ button:hover {
     .login-container, .signup-container {
         width: 100%;
         max-width: 400px;
-        margin-bottom: 20px; /* Adds space between stacked forms */
+        margin-bottom: 20px;
     }
 }
 
-/* 📌 Profile Card */
 .profile-container {
     display: flex;
     justify-content: center;
@@ -117,13 +108,12 @@ button:hover {
     font-size: 14px;
     color: #666;
     margin: 5px 0;
-    word-wrap: break-word; /* Ensures long words wrap */
-    overflow-wrap: break-word; /* Breaks long words */
-    white-space: normal; /* Allows text to wrap */
-    text-align: center; /* Aligns text properly */
+    word-wrap: break-word; 
+    overflow-wrap: break-word;
+    white-space: normal; 
+    text-align: center; 
 }
 
-/* 📸 Profile Image */
 .profile-card img {
     width: 120px;
     height: 120px;
@@ -143,7 +133,6 @@ button:hover {
     color: red;
 }
 
-/* 📸 Profile Picture */
 .profile-pic {
     width: 120px;
     height: 120px;
@@ -151,12 +140,11 @@ button:hover {
     object-fit: cover;
     border: 3px solid #ddd;
     margin-bottom: 10px;
-    display: block; /* Ensures proper alignment */
+    display: block;
     margin-left: auto;
     margin-right: auto;
 }
 
-/* Default Profile Placeholder */
 .default-pic {
     background: #ccc;
     display: flex;
@@ -167,8 +155,6 @@ button:hover {
     color: #666;
 }
 
-
-/* 📌 Logout Button */
 .logout-btn {
     display: inline-block;
     margin-top: 15px;
@@ -181,12 +167,9 @@ button:hover {
     text-decoration: underline;
 }
 
-/* ✅ Success and Error Messages */
-/* Success and Error Message Styles */
-/* Success and Error Message Styles */
 .success, .error {
     position: fixed;
-    top: 60px; /* Adjust if navbar height is different */
+    top: 60px; 
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
@@ -212,7 +195,6 @@ button:hover {
     border: 1px solid #f5c6cb;
 }
 
-/* Fading out effect */
 @keyframes fadeOut {
     0% {
         opacity: 1;
@@ -226,10 +208,6 @@ button:hover {
     }
 }
 
-
-
-/* 📌 Navbar Styles */
-/* 📌 Navbar Styles */
 .navbar {
     background: #333;
     color: white;
@@ -239,34 +217,30 @@ button:hover {
     top: 0;
     left: 0;
     display: flex;
-    justify-content: space-between;  /* Ensures that navbar content has space on either side */
-    align-items: center;             /* Centers items vertically */
+    justify-content: space-between; 
+    align-items: center;           
     z-index: 1000;
 }
 
-/* 📌 Navbar Container */
 .navbar-container {
     display: flex;
-    justify-content: flex-end;  /* Align items to the right */
+    justify-content: flex-end;  
     align-items: center;
-    width: 100%;                /* Ensures the container takes full width */
-    max-width: 1200px;          /* Optional: Restrict the container to a max width */
+    width: 100%;                
+    max-width: 1200px;         
     padding: 0 20px;
 }
 
-/* 📌 Navbar Links */
 .nav-links {
     list-style: none;
     display: flex;
     gap: 15px;
     margin: 0;
     padding: 0;
-    justify-content: flex-end;  /* Ensures items are aligned to the right */
-    width: 100%;                /* Ensures the nav-links takes the full available width */
+    justify-content: flex-end;  
+    width: 100%;               
 }
 
-
-/* 📌 Keep buttons aligned */
 .nav-links li {
     display: inline;
 }
@@ -283,7 +257,6 @@ button:hover {
     background: #555;
 }
 
-/* ✅ Preserve styles for .login and .logout */
 .nav-links .logout {
     background: red;
     border-radius: 5px;
@@ -294,8 +267,6 @@ button:hover {
     border-radius: 5px;
 }
 
-
-/* send file */
 .form-container {
     background: #ffffff;
     padding: 25px;
@@ -308,7 +279,6 @@ button:hover {
     text-align: left;
 }
 
-/* Form group styling */
 .form-group {
     margin-bottom: 15px;
     display: flex;
@@ -335,7 +305,6 @@ input:focus, select:focus, textarea:focus {
     outline: none;
 }
 
-/* Username container for dropdown and input */
 .username-container {
     display: flex;
     align-items: center;
@@ -352,7 +321,6 @@ input:focus, select:focus, textarea:focus {
     width: 130px;
 }
 
-/* Suggestions box */
 .suggestions-box {
     display: none;
     position: absolute;
@@ -379,7 +347,6 @@ input:focus, select:focus, textarea:focus {
     background: #f1f1f1;
 }
 
-/* Comment box */
 textarea#comment {
     height: 120px;
     resize: vertical;
@@ -396,7 +363,7 @@ textarea#comment {
 }
 
 .balance-amount {
-    color: #28a745; /* Green color for positive balance */
+    color: #28a745;
 }
 /* .form2-container {
     display: flex; 
