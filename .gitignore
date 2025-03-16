@@ -1,2 +1,4 @@
 uploads/
 temp/
+docker/
+logs/user_activity.log

@@ -38,8 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["transfer"]))
 
     $_SESSION["last_transfer_time"] = time();
 
-    $receiverUsername = htmlspecialchars(trim($_POST["username"]), ENT_QUOTES, 'UTF-8');
-    $comment = htmlspecialchars($_POST["comment"] ?? "", ENT_QUOTES, 'UTF-8');
+    require_once '../contr_utils.inc.php'; // sanitation functions
+    $receiverUsername = saitize_input(trim($_POST["username"]), ENT_QUOTES, 'UTF-8');
+    $comment = sanitize_output($_POST["comment"] ?? "", ENT_QUOTES, 'UTF-8');
     $amount = (float)$_POST["amount"];
 
     // Validate receiver username
@@ -50,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["transfer"]))
         exit();
     }
 
-    // Validate amount
+    // Validate amount, also check amount length
     if (!isset($_POST["amount"]) || !is_numeric($_POST["amount"]) || (float)$_POST["amount"] <= 0) {
         $_SESSION["errors_transfer"] = "Please enter a valid amount.";
         logUserActivity($senderUsername, "Entered invalid transfer amount");
@@ -64,7 +65,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["transfer"]))
         header("Location: sendMoney.inc.php");
         exit();
     }
-    
+    //check comment length
+    if(!empty($comment) && strlen($comment) < 300)
+    {
+        $_SESSION["errors_transfer"] = "Comment too long, should be less than 300 characters.";
+        logUserActivity($senderUsername, "Entered comment is larger than max size.");
+        header("Location: sendMoney.inc.php");
+        exit();
+    }
     $senderId = $_SESSION["user_id"];
 
     if (transfer_money($pdo, $senderId, $receiverUsername, $amount,$_POST['search_type'],$comment)) {

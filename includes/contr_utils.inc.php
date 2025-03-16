@@ -16,9 +16,7 @@ function sanitize_output($input) {
     $config = HTMLPurifier_Config::createDefault();
     $purifier = new HTMLPurifier($config);
     $sanitized_input = $purifier->purify($input);
-
-    // Decode HTML entities
-    return htmlspecialchars_decode($sanitized_input);
+    return $sanitized_input;
 }
 
 
