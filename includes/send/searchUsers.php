@@ -1,12 +1,12 @@
 <?php
 
 declare(strict_types=1);
-require_once '../db.inc.php'; // Database connection
-require_once 'sendMoney_model.inc.php'; // Contains search_users function
+require_once '../db.inc.php';
+require_once 'sendMoney_model.inc.php';
 require_once '../../logs/logger.inc.php';
 
 header("Content-Type: application/json");
-session_start(); // Ensure session is started
+session_start();
 
 $username = $_SESSION["username"] ?? "'Guest'";
 
@@ -62,6 +62,6 @@ try {
     }
 } catch (Exception $e) {
     //error_log($e->getMessage());
-    echo json_encode(["error" => "An error occurred."]); // Prevent exposing detailed errors
+    echo json_encode(["error" => "An error occurred."]);
 }
 ?>

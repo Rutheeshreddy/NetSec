@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["transfer"]))
 
     $_SESSION["last_transfer_time"] = time();
 
-    require_once '../contr_utils.inc.php'; // sanitation functions
+    require_once '../contr_utils.inc.php';
     $receiverUsername = sanitize_input(trim($_POST["username"]), ENT_QUOTES, 'UTF-8');
     $comment = sanitize_output($_POST["comment"] ?? "", ENT_QUOTES, 'UTF-8');
     $amount = (float)$_POST["amount"];

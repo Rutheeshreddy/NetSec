@@ -13,17 +13,15 @@ function get_user_profile(object $pdo, int $user_id)
 function update_user_profile(object $pdo, int $user_id, ?string $email, ?string $bio): bool
 {
     try {
-        // Check if the email already exists for another user
         if (!empty($email)) {
             $stmt = $pdo->prepare("SELECT ID FROM Profile WHERE Email = :email AND ID != :user_id");
             $stmt->execute(['email' => $email, 'user_id' => $user_id]);
 
             if ($stmt->fetch()) {
-                return false; // Email is already taken
+                return false; 
             }
         }
 
-        // Construct the query dynamically
         $query = "UPDATE Profile SET ";
         $params = [];
 
@@ -37,7 +35,7 @@ function update_user_profile(object $pdo, int $user_id, ?string $email, ?string 
         }
 
         if (empty($params)) {
-            return false; // No valid updates
+            return false; 
         }
 
         $query = rtrim($query, ", ") . " WHERE ID = :user_id";
@@ -46,7 +44,7 @@ function update_user_profile(object $pdo, int $user_id, ?string $email, ?string 
         $stmt = $pdo->prepare($query);
         return $stmt->execute($params);
     } catch (PDOException $e) {
-        error_log("Profile Update Error: " . $e->getMessage()); // Log error
+        error_log("Profile Update Error: " . $e->getMessage());
         return false;
     }
 }
@@ -63,7 +61,7 @@ function get_user_password_hash(object $pdo, int $user_id): ?string {
     return $user["passwordhash"] ?? null;
 }
 
-// Updates a user's password with a securely hashed version
+//updates password
 function update_user_password(object $pdo, int $user_id, string $new_password): bool {
     $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
     
@@ -95,22 +93,22 @@ function get_old_profile_image(PDO $pdo, int $user_id): ?string
     return $result ? $result["profileimagepath"] : null;
 }
 
-// Securely process and validate user data
+//process data securely
 function sanitize_input(string $input, int $max_length): string {
-    $input = strip_tags($input); // Remove all HTML tags
-    $input = preg_replace('/[^a-zA-Z0-9@.,!?()\s-]/u', '', $input); // Allow Aplha Numeric only
-    $input = trim($input); // Remove excess spaces
-    $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8'); // Encode special characters
+    $input = strip_tags($input); 
+    $input = preg_replace('/[^a-zA-Z0-9@.,!?()\s-]/u', '', $input); 
+    $input = trim($input); 
+    $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8'); 
 
-    return substr($input, 0, $max_length); // Enforce length limit
+    return substr($input, 0, $max_length);
 }
 
-// Validate email
+//validate email
 function is_valid_email(string $email): bool {
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
-// Get user ID by username
+//get user ID by username
 function get_user_id_by_username(PDO $pdo, string $Username): ?int
 {
     $stmt = $pdo->prepare("SELECT ID FROM Profile WHERE Username = :Username");
@@ -119,23 +117,23 @@ function get_user_id_by_username(PDO $pdo, string $Username): ?int
     return ($id = $stmt->fetchColumn()) ? (int) $id : null;
 }
 
-// Search users by username (case-insensitive search)
+//search users by username
 function search_users(PDO $pdo, string $searchTerm, string $type): array
 {
 
     if (strlen($searchTerm) < 1) {
-        return []; // Return empty array instead of top 5 users
+        return []; 
     }
 
     if($type=="username"){
     $stmt = $pdo->prepare("SELECT Username FROM Profile WHERE LOWER(Username) LIKE LOWER(:searchTerm) LIMIT 5");
-    $searchTerm = $searchTerm . '%'; // Append '%' before binding to parameter
+    $searchTerm = $searchTerm . '%'; 
     $stmt->execute([':searchTerm' => $searchTerm]);
     }
     else 
     {
         $stmt = $pdo->prepare("SELECT ID FROM Profile WHERE CAST(ID AS TEXT) LIKE :searchTerm LIMIT 5;");
-        $searchTerm = $searchTerm . '%'; // Append '%' for partial matching
+        $searchTerm = $searchTerm . '%'; 
         $stmt->execute([':searchTerm' => $searchTerm]);
     }
 

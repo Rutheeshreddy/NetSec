@@ -20,7 +20,6 @@ if (!is_valid_user($user)) {
     die("User not found.");
 }
 
-// Sanitize user input
 $username = sanitize_input($user["username"] ?? "", 50);
 $email = sanitize_input($user["email"] ?? "", 320);
 $bio = sanitize_input($user["biography"] ?? "", 500);
@@ -32,7 +31,6 @@ if (!is_valid_email($email)) {
     die("Invalid email format.");
 }
 
-// Validate and process profile image path
 $profile_image = $user["profileimagepath"] ?? null;
 $upload_dir = "../../uploads/";
 

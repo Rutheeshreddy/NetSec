@@ -1,9 +1,9 @@
 <?php
 
 declare(strict_types=1);
-require_once '../config_session.inc.php'; // Session configuration
-require_once '../db.inc.php'; // Database connection
-require_once 'sendMoney_model.inc.php'; // Contains search_users function
+require_once '../config_session.inc.php'; 
+require_once '../db.inc.php'; 
+require_once 'sendMoney_model.inc.php';
 
 function display_money_transfer_form(): void
 {

@@ -8,12 +8,10 @@ require_once 'profile_model.inc.php';
 $user_id = $_SESSION["user_id"];
 $user = get_user_profile($pdo, $user_id);
 
-// Sanitize fields
 $username = sanitize_input($user["username"] ?? "", 50);
 $email = sanitize_input($user["email"] ?? "", 100);
 $bio = sanitize_input($user["biography"] ?? "", 500);
 
-// Validate profile image path (prevent directory traversal)
 $profile_image = $user["profileimagepath"] ?? null;
 $upload_dir = "../../uploads/";
 

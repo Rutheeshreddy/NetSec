@@ -15,7 +15,6 @@ if(!isset($_SESSION["user_id"])) {
 } 
 logUserActivity($_SESSION["username"], "Accessed transaction history");
 
-// ✅ Get transaction history from Controller
 $transactions = get_user_transactions();
 
 ?>
@@ -30,7 +29,6 @@ $transactions = get_user_transactions();
 </head>
 <body>
 
-    <!-- <h1>Transfer Money</h1> -->
     <?php  display_transaction_history($transactions, $_SESSION["user_id"]) ?> 
 
 </body>

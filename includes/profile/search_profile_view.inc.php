@@ -121,7 +121,7 @@ function display_profile_search_form(): void
             });
 
             searchForm.addEventListener("submit", function (event) {
-                event.preventDefault(); // Prevent normal form submission
+                event.preventDefault(); 
 
                 const searchType = searchTypeDropdown.value;
                 const query = usernameInput.value.trim();

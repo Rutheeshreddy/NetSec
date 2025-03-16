@@ -1,8 +1,8 @@
 <?php
 
 declare(strict_types=1);
-require_once '../db.inc.php'; // Database connection
-require_once 'profile_model.inc.php'; // Contains search_users function
+require_once '../db.inc.php'; 
+require_once 'profile_model.inc.php'; 
 require_once '../../logs/logger.inc.php';
 
 header("Content-Type: application/json");

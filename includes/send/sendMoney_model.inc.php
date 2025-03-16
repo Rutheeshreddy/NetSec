@@ -12,23 +12,23 @@ function get_user_id_by_username(PDO $pdo, string $Username): ?int
     return ($id = $stmt->fetchColumn()) ? (int) $id : null;
 }
 
-// Search users by username (case-insensitive search)
+// Search users by username 
 function search_users(PDO $pdo, string $searchTerm, string $type): array
 {
 
     if (strlen($searchTerm) < 1) {
-        return []; // Return empty array instead of top 5 users
+        return []; 
     }
 
     if($type=="username"){
     $stmt = $pdo->prepare("SELECT Username FROM Profile WHERE LOWER(Username) LIKE LOWER(:searchTerm) LIMIT 5");
-    $searchTerm = $searchTerm . '%'; // Append '%' before binding to parameter
+    $searchTerm = $searchTerm . '%'; 
     $stmt->execute([':searchTerm' => $searchTerm]);
     }
     else 
     {
         $stmt = $pdo->prepare("SELECT ID FROM Profile WHERE CAST(ID AS TEXT) LIKE :searchTerm LIMIT 5;");
-        $searchTerm = $searchTerm . '%'; // Append '%' for partial matching
+        $searchTerm = $searchTerm . '%'; 
         $stmt->execute([':searchTerm' => $searchTerm]);
     }
 
@@ -85,7 +85,7 @@ function transfer_money(PDO $pdo, int $senderId, string $receiverUsername, float
             ':senderId' => $senderId,
             ':receiverId' => $receiverId,
             ':amount' => $amount,
-            ':comment' => htmlspecialchars($comment) // Prevent XSS
+            ':comment' => htmlspecialchars($comment) 
         ]);
 
         $pdo->commit();
@@ -103,7 +103,7 @@ function transfer_money(PDO $pdo, int $senderId, string $receiverUsername, float
         if (in_array($e->getMessage(), $knownErrors)) {
             $_SESSION["errors_transfer"] = $e->getMessage();
         } else {
-            $_SESSION["errors_transfer"] = "Database error"; // Generic message for unexpected errors
+            $_SESSION["errors_transfer"] = "Database error"; 
         }
 
         return false;
