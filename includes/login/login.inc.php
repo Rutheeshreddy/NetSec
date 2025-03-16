@@ -7,7 +7,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pwd = $_POST["password"];
     $logUsername = "'Guest'";
 
-    // hCaptcha Secret Key
     $env = parse_ini_file(__DIR__ . '/../../.env');
     $hcaptcha_secret = $env['CAPTCHA_SECRET'] ?? '';
 
@@ -16,8 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: ../../index.php?error=captcha_missing");
         exit();
     }
-
-    // Verify hCaptcha
+    
     $captcha_response = $_POST['h-captcha-response'];
     $verify_url = "https://api.hcaptcha.com/siteverify";
     

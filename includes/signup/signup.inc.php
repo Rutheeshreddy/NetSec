@@ -3,9 +3,8 @@
 require_once '../../logs/logger.inc.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $logUsername = "'Guest'"; // Always log as "'Guest'" until signup succeeds
+    $logUsername = "'Guest'";
 
-    // hCaptcha Secret Key
     $env = parse_ini_file(__DIR__ . '/../../.env');
     $hcaptcha_secret = $env['CAPTCHA_SECRET'] ?? '';
 
@@ -15,7 +14,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Verify hCaptcha
     $captcha_response = $_POST['h-captcha-response'];
     $verify_url = "https://api.hcaptcha.com/siteverify";
     
