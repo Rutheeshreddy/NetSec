@@ -10,11 +10,16 @@ session_start();
 
 $username = $_SESSION["username"] ?? "Guest";
 
-if (!isset($_SESSION['search_attempts']) || time() - $_SESSION['search_attempts']['time'] > 60) {
+if (!isset($_GET['csrf_token']) || $_GET['csrf_token'] !== $_SESSION['csrf_token']) {
+    echo json_encode(["error" => "Invalid CSRF token"]);
+    exit();
+}
+
+if (!isset($_SESSION['search_attempts']) || time() - $_SESSION['search_attempts']['time'] > 30) {
     $_SESSION['search_attempts'] = ['count' => 0, 'time' => time()];
 }
 
-if ($_SESSION['search_attempts']['count'] >= 60) { 
+if ($_SESSION['search_attempts']['count'] >= 15) { 
     logUserActivity($username, "Rate limited after excessive search attempts");
     header("HTTP/1.1 429 Too Many Requests");
     echo json_encode(["error" => "Too many requests. Please try again later."]);

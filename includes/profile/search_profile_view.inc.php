@@ -20,6 +20,7 @@ function display_profile_search_form(): void
                         <option value="userID">UserID</option>
                     </select>
                     <input type="text" name="query" id="username" autocomplete="off" required>
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                     <div id="suggestions" class="suggestions-box"></div>
                 </div>
             </div>
@@ -37,6 +38,18 @@ function display_profile_search_form(): void
 
             suggestionsBox.style.display = "none";
 
+            function escapeHTML(str) {
+                return str.replace(/[&<>"']/g, function (match) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#39;'
+                    }[match];
+                });
+            }
+
             async function fetchUsers(query, searchType) {
                 if (query.length < 1) {
                     suggestionsBox.style.display = "none";
@@ -44,15 +57,13 @@ function display_profile_search_form(): void
                 }
 
                 try {
-                    console.log("Fetching users:", query, "Search Type:", searchType);
-                    const response = await fetch(`search_profile_contr.inc.php?query=${encodeURIComponent(query)}&type=${encodeURIComponent(searchType)}`);
+                    const response = await fetch(`search_profile_contr.inc.php?query=${encodeURIComponent(query)}&type=${encodeURIComponent(searchType)}&csrf_token=<?= $_SESSION['csrf_token'] ?>`);
 
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
 
                     const data = await response.json();
-                    console.log("Response Data:", data);
 
                     if (!Array.isArray(data) || data.length === 0) {
                         suggestionsBox.style.display = "none";
@@ -66,10 +77,10 @@ function display_profile_search_form(): void
                         div.setAttribute("tabindex", "0");
 
                         if (searchType === "username") {
-                            div.textContent = user.username;
+                            div.textContent = escapeHTML(user.username);
                             div.dataset.userId = user.user_id;
                         } else {
-                            div.textContent = `User ID: ${user.user_id}`;
+                            div.textContent = `User ID: ${escapeHTML(user.user_id)}`;
                             div.dataset.userId = user.user_id;
                         }
 
@@ -109,7 +120,6 @@ function display_profile_search_form(): void
                 }
             });
 
-            // 🔹 Handle manual form submission correctly
             searchForm.addEventListener("submit", function (event) {
                 event.preventDefault(); // Prevent normal form submission
 
@@ -121,13 +131,11 @@ function display_profile_search_form(): void
                     return;
                 }
 
-                fetch(`search_profile_contr.inc.php?query=${encodeURIComponent(query)}&type=${encodeURIComponent(searchType)}`)
+                fetch(`search_profile_contr.inc.php?query=${encodeURIComponent(query)}&type=${encodeURIComponent(searchType)}&csrf_token=<?= $_SESSION['csrf_token'] ?>`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log("Form submission data:", data);
                         if (Array.isArray(data) && data.length > 0) {
-                            const firstResult = data[0]; // Take the first result
-                            window.location.href = `pub_profile_view.inc.php?user_id=${firstResult.user_id}`;
+                            window.location.href = `pub_profile_view.inc.php?user_id=${data[0].user_id}`;
                         } else {
                             alert("No results found.");
                         }

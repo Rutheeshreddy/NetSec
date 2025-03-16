@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["transfer"]))
     $_SESSION["last_transfer_time"] = time();
 
     require_once '../contr_utils.inc.php'; // sanitation functions
-    $receiverUsername = saitize_input(trim($_POST["username"]), ENT_QUOTES, 'UTF-8');
+    $receiverUsername = sanitize_input(trim($_POST["username"]), ENT_QUOTES, 'UTF-8');
     $comment = sanitize_output($_POST["comment"] ?? "", ENT_QUOTES, 'UTF-8');
     $amount = (float)$_POST["amount"];
 
@@ -47,6 +47,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["transfer"]))
     if (!isset($_POST["username"]) || empty($receiverUsername)) {
         $_SESSION["errors_transfer"] = "Please enter a valid username.";
         logUserActivity($senderUsername, "Entered invalid recipient username");
+        header("Location: sendMoney.inc.php");
+        exit();
+    }
+
+    if (strlen($receiverUsername) > 30) {
+        $_SESSION["errors_transfer"] = "Username should be less than 30 characters.";
+        logUserActivity($senderUsername, "Entered username exceeds 30 characters.");
         header("Location: sendMoney.inc.php");
         exit();
     }
@@ -66,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["transfer"]))
         exit();
     }
     //check comment length
-    if(!empty($comment) && strlen($comment) < 300)
+    if(!empty($comment) && strlen($comment) > 300)
     {
         $_SESSION["errors_transfer"] = "Comment too long, should be less than 300 characters.";
         logUserActivity($senderUsername, "Entered comment is larger than max size.");

@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-require_once '../config_session.inc.php' ; // Session configuration
+require_once '../config_session.inc.php'; // Session configuration
 require_once '../db.inc.php'; // Database connection
 require_once 'sendMoney_model.inc.php'; // Contains search_users function
 
@@ -22,7 +22,8 @@ function display_money_transfer_form(): void
                         <option value="userID">UserID</option>
                     </select>
                     <!-- Username input field -->
-                    <input type="text" name="username" id="username" autocomplete="off" required>
+                    <input type="text" name="username" id="username" autocomplete="off" required maxlength="30">
+                    <span id="usernameCount" class="char-counter">30 characters left</span>
                     <div id="suggestions" class="suggestions-box"></div>
                 </div>
             </div>
@@ -34,7 +35,8 @@ function display_money_transfer_form(): void
 
             <div class="form-group">
                 <label for="comment">Comment (Optional):</label>
-                <textarea name="comment" id="comment"></textarea>
+                <textarea name="comment" id="comment" maxlength="300"></textarea>
+                <span id="commentCount" class="char-counter">300 characters left</span>
             </div>
         </div>
 
@@ -42,85 +44,120 @@ function display_money_transfer_form(): void
     </form>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const usernameInput = document.getElementById("username");
-        const suggestionsBox = document.getElementById("suggestions");
-        const searchTypeDropdown = document.getElementById("search_type");
+        document.addEventListener("DOMContentLoaded", function () {
+            function setupCharCounter(inputId, counterId, maxChars) {
+                const inputField = document.getElementById(inputId);
+                const charCounter = document.getElementById(counterId);
 
-        suggestionsBox.style.display = "none";
-
-        async function fetchUsers(query, searchType) {
-            if (query.length < 2) {
-                suggestionsBox.style.display = "none";
-                return;
-            }
-
-            try {
-                const response = await fetch(`searchUsers.php?query=${encodeURIComponent(query)}&type=${searchType}`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                function updateCounter() {
+                    const remaining = maxChars - inputField.value.length;
+                    charCounter.textContent = `${remaining} characters left`;
+                    charCounter.classList.toggle("warning", remaining <= 10);
                 }
 
-                const data = await response.json();
+                inputField.addEventListener("input", updateCounter);
+                updateCounter();
+            }
 
-                if (!Array.isArray(data) || data.length === 0) {
+            // **Character counters for username (30) and comment (300)**
+            setupCharCounter("username", "usernameCount", 30);
+            setupCharCounter("comment", "commentCount", 300);
+
+            const usernameInput = document.getElementById("username");
+            const suggestionsBox = document.getElementById("suggestions");
+            const searchTypeDropdown = document.getElementById("search_type");
+
+            suggestionsBox.style.display = "none";
+
+            function escapeHTML(str) {
+                return str.replace(/[&<>"']/g, function (match) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#39;'
+                    }[match];
+                });
+            }
+
+            async function fetchUsers(query, searchType) {
+                if (query.length < 2) {
                     suggestionsBox.style.display = "none";
                     return;
                 }
 
-                suggestionsBox.innerHTML = ""; // Clear old suggestions
-                data.forEach(user => {
-                    let div = document.createElement("div");
-                    div.classList.add("suggestion-item");
-                    div.setAttribute("tabindex", "0");
-                    div.textContent = user; // Display username or userID
-                    suggestionsBox.appendChild(div);
-                });
+                const allowedTypes = ["username", "userID"];
+                if (!allowedTypes.includes(searchType)) {
+                    console.error("Invalid search type");
+                    return;
+                }
 
-                suggestionsBox.style.display = "block";
-            } catch (error) {
-                console.error("Error fetching users:", error);
-                suggestionsBox.style.display = "none"; // Hide suggestions on error
+                try {
+                    const response = await fetch(`searchUsers.php?query=${encodeURIComponent(query)}&type=${searchType}`);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!Array.isArray(data) || data.length === 0) {
+                        suggestionsBox.style.display = "none";
+                        return;
+                    }
+
+                    suggestionsBox.innerHTML = "";
+                    data.forEach(user => {
+                        let div = document.createElement("div");
+                        div.classList.add("suggestion-item");
+                        div.setAttribute("tabindex", "0");
+                        div.textContent = escapeHTML(user);
+                        suggestionsBox.appendChild(div);
+                    });
+
+                    suggestionsBox.style.display = "block";
+                } catch (error) {
+                    console.error("Error fetching users:", error);
+                    suggestionsBox.style.display = "none";
+                }
             }
-        }
 
-        // Fetch users when input changes
-        usernameInput.addEventListener("input", () => {
-            const searchType = searchTypeDropdown.value;
-            fetchUsers(usernameInput.value, searchType);
-        });
+            let debounceTimer;
+            usernameInput.addEventListener("input", () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const searchType = searchTypeDropdown.value;
+                    fetchUsers(usernameInput.value, searchType);
+                }, 300);
+            });
 
-        // Fetch users when dropdown changes
-        searchTypeDropdown.addEventListener("change", () => {
-            const searchType = searchTypeDropdown.value;
-            fetchUsers(usernameInput.value, searchType);
-        });
+            searchTypeDropdown.addEventListener("change", () => {
+                fetchUsers(usernameInput.value, searchTypeDropdown.value);
+            });
 
-        // Handle suggestion selection
-        suggestionsBox.addEventListener("click", event => {
-            if (event.target.classList.contains("suggestion-item")) {
-                usernameInput.value = event.target.textContent;
-                suggestionsBox.style.display = "none";
-            }
-        });
+            suggestionsBox.addEventListener("click", event => {
+                if (event.target.classList.contains("suggestion-item")) {
+                    usernameInput.value = escapeHTML(event.target.textContent);
+                    suggestionsBox.style.display = "none";
+                }
+            });
 
-        // Hide suggestions when clicking outside
-        document.addEventListener("click", event => {
-            if (!suggestionsBox.contains(event.target) && event.target !== usernameInput) {
-                suggestionsBox.style.display = "none";
-            }
-        });
+            document.addEventListener("click", event => {
+                if (!suggestionsBox.contains(event.target) && event.target !== usernameInput) {
+                    suggestionsBox.style.display = "none";
+                }
+            });
 
-        // Allow keyboard navigation for better UX
-        suggestionsBox.addEventListener("keydown", event => {
-            if (event.key === "Enter") {
-                usernameInput.value = event.target.textContent;
-                suggestionsBox.style.display = "none";
-                usernameInput.focus();
-            }
+            suggestionsBox.addEventListener("keydown", event => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    usernameInput.value = escapeHTML(event.target.textContent);
+                    suggestionsBox.style.display = "none";
+                    usernameInput.focus();
+                }
+            });
         });
-    });
     </script>
 
     <?php
@@ -135,16 +172,13 @@ function display_money_transfer_form(): void
     }
 }
 ?>
- <?php
+<?php
 function display_money_balance()
 {
     global $pdo;
-    $balance = get_user_balance($pdo,(string)$_SESSION["user_id"]);
+    $balance = get_user_balance($pdo, (string)$_SESSION["user_id"]);
     echo '<div class="balance-container">';
     echo '<p>Your Balance: <span class="balance-amount">&#8377;' . number_format((float) $balance, 2) . '</span></p>';
     echo '</div>';
 }
 ?>
-
-
-
