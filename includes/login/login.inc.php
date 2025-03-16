@@ -10,11 +10,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // hCaptcha Secret Key
     $hcaptcha_secret = "ES_16939cff4011414e8b822d50c4810b89";
 
-    if (!isset($_POST['h-captcha-response']) || empty($_POST['h-captcha-response'])) {
-        logUserActivity($logUsername, "Login failed due to missing CAPTCHA.");
-        header("Location: ../../index.php?error=captcha_missing");
-        exit();
-    }
+    // if (!isset($_POST['h-captcha-response']) || empty($_POST['h-captcha-response'])) {
+    //     logUserActivity($logUsername, "Login failed due to missing CAPTCHA.");
+    //     header("Location: ../../index.php?error=captcha_missing");
+    //     exit();
+    // }
 
     // Verify hCaptcha
     $captcha_response = $_POST['h-captcha-response'];
@@ -37,11 +37,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $verify_response = file_get_contents($verify_url, false, $context);
     $captcha_success = json_decode($verify_response, true);
 
-    if (!$captcha_success["success"]) {
-        logUserActivity($logUsername, "Login failed due to invalid CAPTCHA.");
-        header("Location: ../../index.php?error=captcha_invalid");
-        exit();
-    }
+    // if (!$captcha_success["success"]) {
+    //     logUserActivity($logUsername, "Login failed due to invalid CAPTCHA.");
+    //     header("Location: ../../index.php?error=captcha_invalid");
+    //     exit();
+    // }
 
     try {
         require_once '../db.inc.php';
@@ -58,6 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errors["password_length"] = "Password length should be less than 100 characters";
         }
 
+        $pattern = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).+$/';
+        if(strlen($pwd) < 8 || !preg_match($pattern, $pwd) === 1)
+        {
+            $errors["errors_login"] = "The password should have atleast 8 characters,atleast 1 uppercase letter, atleast 1 lowercase letter, 1 digit,1 special character(@#$%^&*)";
+        }
         require_once '../config_session.inc.php';
         if ($errors) {      
             $_SESSION["errors_login"] = $errors;

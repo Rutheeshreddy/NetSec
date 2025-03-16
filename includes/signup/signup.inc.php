@@ -61,13 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errors["password_length"] = "Password length should be less than 100 characters";
         }
 
-        $pattern = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).+$/';
-
-        if(strlen($pwd) < 8 || preg_match($pattern, $pwd) === 1)
-        {
-            $errors["pwd_requirements"] = "The password should have atleast 8 characters,atleast 1 uppercase letter, atleast 1 lowercase letter, 1 digit,1 special character(@#$%^&*)";
-        }
-        
         if (strlen($email) > 320) { 
             $errors["email_length"] = "Email length should be less than 320 characters";
         }
@@ -79,6 +72,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             logUserActivity($logUsername, "Signup failed due to validation errors.");
             header("Location: ../../index.php");
             exit();
+        }
+
+        $pattern = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).+$/';
+
+        if(strlen($pwd) < 8 || !preg_match($pattern, $pwd) === 1)
+        {
+            $errors["pwd_requirements"] = "The password should have atleast 8 characters,atleast 1 uppercase letter, atleast 1 lowercase letter, 1 digit,1 special character(@#$%^&*)";
         }
 
         if (is_input_empty($username, $pwd, $email)) {

@@ -90,7 +90,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: profile.inc.php");
             exit();
         }
-        
+        //checking password requirements
+        $pattern = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).+$/';
+        if(strlen($new_password) < 8 || !preg_match($pattern, $new_password) === 1)
+        {
+            $errors["profile_update_error"] = "The password should have atleast 8 characters,atleast 1 uppercase letter, atleast 1 lowercase letter, 1 digit,1 special character(@#$%^&*)";
+        }
         if (update_user_password($pdo, $user_id, $new_password)) {
             $_SESSION["failed_attempts"] = 0; // Reset only after success
             session_regenerate_id(true); // Prevent session fixation
