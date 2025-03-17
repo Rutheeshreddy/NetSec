@@ -21,7 +21,7 @@ if (!isset($_SESSION['search_attempts']) || time() - $_SESSION['search_attempts'
     $_SESSION['search_attempts'] = ['count' => 0, 'time' => time()];
 }
 
-if ($_SESSION['search_attempts']['count'] >= 15) { 
+if ($_SESSION['search_attempts']['count'] >= 30) { 
     logUserActivity($username, "Rate limited after excessive search attempts");
     header("HTTP/1.1 429 Too Many Requests");
     echo json_encode(["error" => "Too many requests. Please try again later."]);
@@ -64,10 +64,15 @@ try {
             }
         }
 
+        usort($safe_results, function ($a, $b) use ($searchTerm) {
+            return strcasecmp($a["username"] ?? "", $searchTerm) === 0 ? -1 : 1;
+        });
+
         logUserActivity($username, "Searched for '$searchTerm' and found " . count($safe_results) . " results");
         echo json_encode($safe_results);
     }
 } catch (Exception $e) {
     echo json_encode(["error" => "An error occurred."]);
 }
+
 ?>
