@@ -74,7 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
         if ($_SESSION["failed_attempts"] >= 5) {
             logUserActivity($_SESSION["username"], "Failed to change pwd multiple times");
-            // Force logout after 5 failures
             session_destroy();
             header("Location: ../login/login.inc.php?error=too_many_attempts");
             exit();
@@ -90,15 +89,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: profile.inc.php");
             exit();
         }
-        //checking password requirements
         $pattern = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).+$/';
         if(strlen($new_password) < 8 || !preg_match($pattern, $new_password) === 1)
         {
             $errors["profile_update_error"] = "The password should have atleast 8 characters,atleast 1 uppercase letter, atleast 1 lowercase letter, 1 digit,1 special character(@#$%^&*)";
         }
         if (update_user_password($pdo, $user_id, $new_password)) {
-            $_SESSION["failed_attempts"] = 0; // Reset only after success
-            session_regenerate_id(true); // Prevent session fixation
+            $_SESSION["failed_attempts"] = 0; 
+            session_regenerate_id(true); 
             $_SESSION["profile_update_success"] = "Password updated successfully!";
             logUserActivity($_SESSION["username"], "Password updated successfully!");
         }
@@ -112,24 +110,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $target_dir = "../../uploads/";
         $allowed_extensions = ["jpg", "jpeg", "png"];
         $allowed_mime_types = ["image/jpeg", "image/png"];
-        $max_file_size = 2 * 1024 * 1024; // 2MB
+        $max_file_size = 2 * 1024 * 1024; 
     
         $file_info = pathinfo($_FILES["profile_image"]["name"]);
         $file_extension = strtolower($file_info["extension"]);
         $file_size = $_FILES["profile_image"]["size"];
     
-        // Secure MIME check
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mime_type = finfo_file($finfo, $_FILES["profile_image"]["tmp_name"]);
         finfo_close($finfo);
     
-        // Prevent excessive upload attempts
         if (!isset($_SESSION['upload_attempts'])) {
             $_SESSION['upload_attempts'] = 0;
             $_SESSION['upload_time'] = time();
         }
     
-        if (time() - $_SESSION['upload_time'] < 60) { // Within 1 minute
+        if (time() - $_SESSION['upload_time'] < 60) { 
             if ($_SESSION['upload_attempts'] >= 3) {
                 $_SESSION["profile_update_error"] = "Too many upload attempts. Try again later.";
                 logUserActivity($_SESSION["username"], "Failed to update Profile Pic: Too many upload attempts");
@@ -137,12 +133,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit();
             }
         } else {
-            $_SESSION['upload_attempts'] = 0; // Reset only if 1 minute has passed
+            $_SESSION['upload_attempts'] = 0; 
         }
         
         $_SESSION['upload_attempts']++;
     
-        // Validate extension, MIME type, and file size
         if (!in_array($file_extension, $allowed_extensions) || 
             !in_array($mime_type, $allowed_mime_types) || 
             $file_size > $max_file_size) {
@@ -152,11 +147,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
     
-        // Generate a secure, unique filename
         $new_filename = "profile_" . $user_id . "_" . bin2hex(random_bytes(16)) . "." . $file_extension;
         $target_file = $target_dir . $new_filename;
     
-        // Move uploaded file securely
         if (move_uploaded_file($_FILES["profile_image"]["tmp_name"], $target_file)) {
             $old_image = get_old_profile_image($pdo, $user_id);
     

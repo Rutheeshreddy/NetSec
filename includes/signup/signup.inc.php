@@ -3,10 +3,10 @@
 require_once '../../logs/logger.inc.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $logUsername = "'Guest'"; // Always log as "'Guest'" until signup succeeds
+    $logUsername = "'Guest'";
 
-    // hCaptcha Secret Key
-    $hcaptcha_secret = "ES_16939cff4011414e8b822d50c4810b89";
+    $env = parse_ini_file(__DIR__ . '/../../.env');
+    $hcaptcha_secret = $env['CAPTCHA_SECRET'] ?? '';
 
     if (!isset($_POST['h-captcha-response']) || empty($_POST['h-captcha-response'])) {
         logUserActivity($logUsername, "Signup failed due to missing CAPTCHA.");
@@ -14,7 +14,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Verify hCaptcha
     $captcha_response = $_POST['h-captcha-response'];
     $verify_url = "https://api.hcaptcha.com/siteverify";
     

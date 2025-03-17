@@ -7,16 +7,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pwd = $_POST["password"];
     $logUsername = "'Guest'";
 
-    // hCaptcha Secret Key
-    $hcaptcha_secret = "ES_16939cff4011414e8b822d50c4810b89";
+    $env = parse_ini_file(__DIR__ . '/../../.env');
+    $hcaptcha_secret = $env['CAPTCHA_SECRET'] ?? '';
 
-    // if (!isset($_POST['h-captcha-response']) || empty($_POST['h-captcha-response'])) {
-    //     logUserActivity($logUsername, "Login failed due to missing CAPTCHA.");
-    //     header("Location: ../../index.php?error=captcha_missing");
-    //     exit();
-    // }
-
-    // Verify hCaptcha
+    if (!isset($_POST['h-captcha-response']) || empty($_POST['h-captcha-response'])) {
+        logUserActivity($logUsername, "Login failed due to missing CAPTCHA.");
+        header("Location: ../../index.php?error=captcha_missing");
+        exit();
+    }
+    
     $captcha_response = $_POST['h-captcha-response'];
     $verify_url = "https://api.hcaptcha.com/siteverify";
     
@@ -37,11 +36,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $verify_response = file_get_contents($verify_url, false, $context);
     $captcha_success = json_decode($verify_response, true);
 
-    // if (!$captcha_success["success"]) {
-    //     logUserActivity($logUsername, "Login failed due to invalid CAPTCHA.");
-    //     header("Location: ../../index.php?error=captcha_invalid");
-    //     exit();
-    // }
+    if (!$captcha_success["success"]) {
+        logUserActivity($logUsername, "Login failed due to invalid CAPTCHA.");
+        header("Location: ../../index.php?error=captcha_invalid");
+        exit();
+    }
 
     try {
         require_once '../db.inc.php';
@@ -100,13 +99,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit();
         }
 
-        // Successful login
-        $newSessionId = session_create_id();
-        $sessionId = $newSessionId . "_" . $result["id"]; // Make this more secure
-        session_id($sessionId);
+        session_regenerate_id(true); 
 
         $_SESSION["user_id"] = $result["id"];
-        $_SESSION["username"] = $logUsername; // Already sanitized
+        $_SESSION["username"] = $logUsername; 
         $_SESSION["last_regeneration"] = time();
 
         logUserActivity($logUsername, "Successfully logged in");

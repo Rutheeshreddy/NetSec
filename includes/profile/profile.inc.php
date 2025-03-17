@@ -20,7 +20,6 @@ if (!is_valid_user($user)) {
     die("User not found.");
 }
 
-// Sanitize user input
 $username = sanitize_input($user["username"] ?? "", 50);
 $email = sanitize_input($user["email"] ?? "", 320);
 $bio = sanitize_input($user["biography"] ?? "", 500);
@@ -31,7 +30,6 @@ if (!is_valid_email($email)) {
     die("Invalid email format.");
 }
 
-// Validate and process profile image path
 $profile_image = $user["profileimagepath"] ?? null;
 $upload_dir = "../../uploads/";
 
@@ -70,14 +68,13 @@ if ($profile_image && strpos($profile_image, $upload_dir) === 0 && !preg_match('
         setupCharCounter("bio", "bioCount", 500);
         setupCharCounter("new_password", "passwordCount", 100);
 
-        // File size validation
         document.getElementById("profile_image").addEventListener("change", function () {
             const file = this.files[0];
-            const maxSize = 2 * 1024 * 1024; // 2MB
+            const maxSize = 2 * 1024 * 1024; 
 
             if (file && file.size > maxSize) {
                 alert("File size exceeds 2MB. Please upload a smaller file.");
-                this.value = ""; // Clear file input
+                this.value = ""; 
             }
         });
     });
@@ -105,7 +102,6 @@ if ($profile_image && strpos($profile_image, $upload_dir) === 0 && !preg_match('
         <div class="form-container">
             <h3>Update Profile</h3>
             <form action="profile_contr.inc.php" method="post" enctype="multipart/form-data">
-                <!-- CSRF Token -->
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
 
                 <label for="email">Email:</label>
@@ -124,7 +120,6 @@ if ($profile_image && strpos($profile_image, $upload_dir) === 0 && !preg_match('
 
             <h3>Change Password</h3>
             <form action="profile_contr.inc.php" method="post">
-                <!-- CSRF Token -->
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
 
                 <label for="current_password">Current Password:</label>
