@@ -2,6 +2,8 @@ FROM php:apache
 
 # Install PostgreSQL extension for PHP
 RUN apt-get update && apt-get install -y libpq-dev && docker-php-ext-install pdo pdo_pgsql
+RUN apt-get update && apt-get install -y postgresql-client
+
 
 # Enable SSL in Apache
 RUN a2enmod ssl rewrite headers

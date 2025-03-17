@@ -25,7 +25,7 @@ hashed_password=$(echo -n "$password" | sha256sum | awk '{print $1}')
 
 # 5. Database connection details
 DB_HOST="localhost"        # Host machine's address
-DB_PORT="5433"             # PostgreSQL port
+DB_PORT="543"             # PostgreSQL port
 DB_NAME="netsec"           # Database name
 DB_USER="postgres"         # Database username
 DB_PASSWORD="postgres"     # Database password
