@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 require_once '../config_session.inc.php';
 $user_id = $_SESSION['user_id'] ?? null;
-require_once '../Navbar/navbar.php';
 require_once '../../logs/logger.inc.php';
 
 if (!isset($_SESSION["user_id"])) {
@@ -13,6 +12,7 @@ if (!isset($_SESSION["user_id"])) {
     die();
 }
 
+require_once '../Navbar/navbar.php';
 logUserActivity($_SESSION["username"], "Accessed Profile Search page");
 require_once 'search_profile_view.inc.php';
 ?>

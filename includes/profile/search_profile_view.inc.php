@@ -39,6 +39,7 @@ function display_profile_search_form(): void
             suggestionsBox.style.display = "none";
 
             function escapeHTML(str) {
+                if (typeof str !== "string") return str; 
                 return str.replace(/[&<>"']/g, function (match) {
                     return {
                         '&': '&amp;',
