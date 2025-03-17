@@ -4,7 +4,6 @@ require_once '../config_session.inc.php';
 require_once '../db.inc.php';
 require_once 'profile_model.inc.php';
 require_once 'profile_contr.inc.php';
-require_once '../Navbar/navbar.php';
 require_once '../../logs/logger.inc.php';
 
 if (!isset($_GET["user_id"]) || !is_numeric($_GET["user_id"])) {
@@ -31,6 +30,7 @@ if (!is_valid_email($email)) {
     die("Invalid email format.");
 }
 
+require_once '../Navbar/navbar.php';
 $profile_image = $user["profileimagepath"] ?? null;
 $upload_dir = "../../uploads/";
 
