@@ -20,7 +20,9 @@
 
 - **Yagnesh Reddy** 
   - Docker setup with HTTPS integration
-  - Contributed logging functionality  
+  - Contributed to logging functionality  
+  - Database Scheme
+  - Security Testing
   - Debugging   
 
 - **Paavaneeshwar Reddy**  
