@@ -81,10 +81,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["transfer"]))
         if ($_POST['search_type'] == "userID") {
             $receiverUsername = get_username_by_id($pdo, $receiverUsername);
         }
-        logUserActivity($senderUsername, "Transferred $amount from $susername to $receiverUsername");
+        logUserActivity($senderUsername, "Transferred $amount from $senderUsername to $receiverUsername");
     } else {
         $_SESSION["errors_transfer"] = "Transfer failed: " . ($_SESSION["errors_transfer"] ?? "Unknown error.");
-        logUserActivity($senderUsername, "Failed transfer of $amount from $susername to $receiverUsername");
+        logUserActivity($senderUsername, "Failed transfer of $amount from $senderUsername to $receiverUsername");
     }
 
     header("Location: sendMoney.inc.php");
