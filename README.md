@@ -23,7 +23,9 @@
 
 - **Yagnesh Reddy(CS21BTECH11003)** 
   - Docker setup with HTTPS integration
-  - Contributed logging functionality  
+  - Contributed to logging functionality  
+  - Database Scheme
+  - Security Testing
   - Debugging   
 
 - **Paavaneeshwar Reddy(CS22BTECH11014)**  
